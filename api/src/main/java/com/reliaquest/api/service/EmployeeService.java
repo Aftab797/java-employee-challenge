@@ -4,6 +4,7 @@ import com.reliaquest.api.model.Employee;
 import com.reliaquest.api.model.Response;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
@@ -59,5 +60,19 @@ public class EmployeeService {
 
         log.info("Found {} employees matching search string: {}", matchingEmployees.size(), searchString);
         return matchingEmployees;
+    }
+
+    public Integer getHighestSalary() {
+        log.debug("Finding highest salary among all employees");
+        List<Employee> allEmployees = getAllEmployees();
+
+        Integer highestSalary = allEmployees.stream()
+                .map(Employee::getSalary)
+                .filter(Objects::nonNull)
+                .max(Integer::compareTo)
+                .orElse(0);
+
+        log.info("Highest salary found: {}", highestSalary);
+        return highestSalary;
     }
 }
