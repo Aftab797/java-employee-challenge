@@ -24,20 +24,27 @@ public class EmployeeService {
 
     public List<Employee> getAllEmployees() {
         log.debug("Fetching all employees from Mock API");
-        try {
-            ResponseEntity<Response<List<Employee>>> response =
-                    restTemplate.exchange("", HttpMethod.GET, null, new ParameterizedTypeReference<>() {});
+        ResponseEntity<Response<List<Employee>>> response =
+                restTemplate.exchange("", HttpMethod.GET, null, new ParameterizedTypeReference<>() {});
 
-            if (response.getBody() != null && response.getBody().getData() != null) {
-                List<Employee> employees = response.getBody().getData();
-                log.info("Successfully fetched {} employees", employees.size());
-                return employees;
-            }
-            log.info("Received empty response from Mock API");
-            return Collections.emptyList();
-        } catch (Exception e) {
-            log.error("Error fetching employees from Mock API: {}", e.getMessage(), e);
-            throw e;
+        if (response.getBody() != null && response.getBody().getData() != null) {
+            List<Employee> employees = response.getBody().getData();
+            log.info("Successfully fetched {} employees", employees.size());
+            return employees;
         }
+        log.info("Received empty response from Mock API");
+        return Collections.emptyList();
+    }
+
+    public Employee getEmployeeById(String id) {
+        log.debug("Fetching employee by id: {}", id);
+        ResponseEntity<Response<Employee>> response =
+                restTemplate.exchange("/{id}", HttpMethod.GET, null, new ParameterizedTypeReference<>() {}, id);
+
+        Employee employee = response.getBody() != null ? response.getBody().getData() : null;
+        if (employee != null) {
+            log.info("Successfully fetched employee with id: {}", employee.getId());
+        }
+        return employee;
     }
 }

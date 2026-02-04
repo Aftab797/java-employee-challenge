@@ -34,7 +34,9 @@ public class EmployeeController implements IEmployeeController<Employee, Employe
 
     @Override
     public ResponseEntity<Employee> getEmployeeById(String id) {
-        return null;
+        log.debug("GET /api/v1/employee/{} - getEmployeeById", id);
+        Employee employee = employeeService.getEmployeeById(id);
+        return ResponseEntity.ok(employee);
     }
 
     @Override
