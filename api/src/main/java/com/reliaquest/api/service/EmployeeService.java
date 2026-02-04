@@ -1,5 +1,6 @@
 package com.reliaquest.api.service;
 
+import com.reliaquest.api.model.DeleteEmployeeInput;
 import com.reliaquest.api.model.Employee;
 import com.reliaquest.api.model.EmployeeInput;
 import com.reliaquest.api.model.Response;
@@ -104,5 +105,29 @@ public class EmployeeService {
             log.info("Successfully created employee with id: {}", employee.getId());
         }
         return employee;
+    }
+
+    public String deleteEmployeeById(String id) {
+        log.debug("Deleting employee with id: {}", id);
+
+        Employee employee = getEmployeeById(id);
+
+        String employeeName = employee.getName();
+
+        DeleteEmployeeInput deleteInput = new DeleteEmployeeInput();
+        deleteInput.setName(employeeName);
+
+        HttpEntity<DeleteEmployeeInput> request = new HttpEntity<>(deleteInput);
+        ResponseEntity<Response<Boolean>> response =
+                restTemplate.exchange("", HttpMethod.DELETE, request, new ParameterizedTypeReference<>() {});
+
+        boolean deleted = response.getBody() != null ? response.getBody().getData() : false;
+        if (deleted) {
+            log.info("Successfully deleted employee: {}", employeeName);
+            return employeeName;
+        }
+
+        log.warn("Failed to delete employee: {}", employeeName);
+        return null;
     }
 }
