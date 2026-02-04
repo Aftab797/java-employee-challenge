@@ -1,6 +1,7 @@
 package com.reliaquest.api.service;
 
 import com.reliaquest.api.model.Employee;
+import com.reliaquest.api.model.EmployeeInput;
 import com.reliaquest.api.model.Response;
 import java.util.Collections;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -89,5 +91,18 @@ public class EmployeeService {
 
         log.info("Found {} top earning employees", topEarners.size());
         return topEarners;
+    }
+
+    public Employee createEmployee(EmployeeInput employeeInput) {
+        log.debug("Creating employee with name: {}", employeeInput.getName());
+        HttpEntity<EmployeeInput> request = new HttpEntity<>(employeeInput);
+        ResponseEntity<Response<Employee>> response =
+                restTemplate.exchange("", HttpMethod.POST, request, new ParameterizedTypeReference<>() {});
+
+        Employee employee = response.getBody() != null ? response.getBody().getData() : null;
+        if (employee != null) {
+            log.info("Successfully created employee with id: {}", employee.getId());
+        }
+        return employee;
     }
 }

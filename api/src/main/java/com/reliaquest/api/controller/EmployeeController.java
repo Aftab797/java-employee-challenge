@@ -57,7 +57,9 @@ public class EmployeeController implements IEmployeeController<Employee, Employe
 
     @Override
     public ResponseEntity<Employee> createEmployee(EmployeeInput employeeInput) {
-        return null;
+        log.debug("POST /api/v1/employee - createEmployee");
+        Employee employee = employeeService.createEmployee(employeeInput);
+        return ResponseEntity.ok(employee);
     }
 
     @Override
