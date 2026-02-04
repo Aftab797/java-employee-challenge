@@ -75,4 +75,19 @@ public class EmployeeService {
         log.info("Highest salary found: {}", highestSalary);
         return highestSalary;
     }
+
+    public List<String> getTopTenHighestEarningEmployeeNames() {
+        log.debug("Finding top 10 highest earning employee names");
+        List<Employee> allEmployees = getAllEmployees();
+
+        List<String> topEarners = allEmployees.stream()
+                .filter(employee -> employee.getSalary() != null && employee.getName() != null)
+                .sorted((e1, e2) -> e2.getSalary().compareTo(e1.getSalary()))
+                .limit(10)
+                .map(Employee::getName)
+                .toList();
+
+        log.info("Found {} top earning employees", topEarners.size());
+        return topEarners;
+    }
 }
