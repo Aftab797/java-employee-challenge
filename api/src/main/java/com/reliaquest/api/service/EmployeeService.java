@@ -13,11 +13,18 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @Service
+@Retryable(
+        retryFor = HttpClientErrorException.TooManyRequests.class,
+        maxAttempts = 5,
+        backoff = @Backoff(delay = 5000, multiplier = 2))
 public class EmployeeService {
 
     private final RestTemplate restTemplate;
