@@ -47,4 +47,17 @@ public class EmployeeService {
         }
         return employee;
     }
+
+    public List<Employee> getEmployeesByNameSearch(String searchString) {
+        log.debug("Searching employees by name containing: {}", searchString);
+        List<Employee> allEmployees = getAllEmployees();
+
+        List<Employee> matchingEmployees = allEmployees.stream()
+                .filter(employee -> employee.getName() != null
+                        && employee.getName().toLowerCase().contains(searchString.toLowerCase()))
+                .toList();
+
+        log.info("Found {} employees matching search string: {}", matchingEmployees.size(), searchString);
+        return matchingEmployees;
+    }
 }
